@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Family Chore Chart App</title>
+<meta name="theme-color" content="#8b5cf6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Chores">
+<link rel="manifest" href="chores-3c27b8f04a.webmanifest">
+<link rel="apple-touch-icon" href="chores-192.png">
+<link rel="icon" href="chores-192.png">
+<style>
+:root{--bg:#fff8f0;--card:#fff;--ink:#1f2430;--muted:#6b7080;--line:#efe7dc;--brand:#8b5cf6;--brand-2:#efe9ff;--accent:#ff6b6b;--h1:#8b5cf6;--h2:#ff5fa2;--pop1:#ffd27a;--pop2:#7be0b0;--good:#1fa968;--fs:16px;--shadow:0 1px 2px rgba(0,0,0,.05),0 6px 18px rgba(31,36,48,.06)}
+:root[data-palette="garden"]{--brand:#1fa968;--brand-2:#e2f6ec;--accent:#ff9f43;--h1:#2f8a5f;--h2:#1f6f78}
+:root[data-palette="ocean"]{--brand:#2f8be0;--brand-2:#e3f0fc;--accent:#ff9f43;--h1:#2a86d1;--h2:#1b4f9c}
+:root[data-palette="sunset"]{--brand:#ff6b4a;--brand-2:#ffece6;--accent:#8b5cf6;--h1:#ff7a59;--h2:#d63f6b}
+:root[data-theme="dark"]{--bg:#14151a;--card:#1d1f26;--ink:#eef0f5;--muted:#9aa0ad;--line:#2a2d36;--brand-2:#2a2540;--shadow:none}
+:root[data-text="large"]{--fs:18.5px}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--fs)/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:620px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 0 8px}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{font-size:1.35em;margin:0}h2{font-size:1.05em;margin:0 0 10px}
+.hello{font-size:.86em;color:var(--muted)}
+.iconbtn{border:0;background:var(--card);box-shadow:var(--shadow);width:42px;height:42px;border-radius:12px;display:grid;place-items:center;cursor:pointer;font-size:1.2em}
+.card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin:0 0 12px}
+.hero{background:linear-gradient(135deg,var(--h1),var(--h2));color:#fff;position:relative;overflow:hidden}
+.hero>*{position:relative;z-index:1}
+.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;opacity:.35;z-index:0}
+.hero:before{width:200px;height:200px;right:-60px;top:-70px;background:var(--pop1)}
+.hero:after{width:130px;height:130px;right:80px;bottom:-70px;background:var(--pop2)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.muted{color:var(--muted)}.small{font-size:.86em}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;background:var(--brand);color:#fff;min-height:46px}
+.btn.secondary{background:var(--brand-2);color:var(--brand)}
+.btn.ghost{background:transparent;color:var(--brand);padding:8px 10px;min-height:0}
+.btn.danger{background:transparent;color:#e5484d}
+.btn.full{width:100%}
+.hero .btn.secondary{background:rgba(255,255,255,.2);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:7px 12px;cursor:pointer;min-height:40px;font-weight:600}
+.chip.on{background:var(--cc,var(--brand));border-color:var(--cc,var(--brand));color:#fff}
+.kidtabs{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.kidtabs .chip{white-space:nowrap}
+.avatar{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:1.6em;flex:none}
+.pts{font-weight:800;font-variant-numeric:tabular-nums}
+.bar{height:12px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;transition:width .3s}
+.slot{font-size:.78em;font-weight:800;letter-spacing:.08em;color:var(--muted);margin:14px 0 8px}
+.chore{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;margin:0 0 8px;cursor:pointer;border:2px solid transparent;user-select:none;-webkit-tap-highlight-color:transparent}
+.chore .em{font-size:1.6em;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none;background:rgba(255,255,255,.6)}
+.chore .nm{flex:1;font-weight:650}
+.chore .ck{width:36px;height:36px;border-radius:50%;border:3px solid currentColor;display:grid;place-items:center;font-weight:900;flex:none;opacity:.55}
+.chore.done .ck{opacity:1;background:currentColor}
+.chore.done .ck:after{content:"✓";color:#fff}
+.chore.done .nm{text-decoration:line-through;opacity:.6}
+.badge{font-size:.78em;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.grid{display:grid;gap:4px}
+.wk th,.wk td{text-align:center;font-size:.8em;padding:4px 2px}
+.wk{width:100%;border-collapse:separate;border-spacing:2px;table-layout:fixed}.wk col.l{width:96px}
+.wk td.cell{border-radius:9px;height:34px;font-size:1.05em}
+.wk td.lbl{text-align:left;font-weight:600;max-width:96px;font-size:.74em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rewards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rw{border-radius:16px;padding:14px;text-align:center}
+.rw .e{font-size:2em}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.list li:last-child{border:0}
+.grow{flex:1;min-width:0}
+.ellip{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+label.f{display:block;margin:0 0 12px}
+label.f span{display:block;font-size:.86em;color:var(--muted);margin-bottom:5px}
+input.in,select.in{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:12px;min-height:46px}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:10}
+nav.tabs .wrap{display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs button{border:0;background:none;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.72em;color:var(--muted);cursor:pointer}
+nav.tabs button b{font-size:1.6em;line-height:1;filter:grayscale(1);opacity:.6}
+nav.tabs button.on{color:var(--brand);font-weight:800}
+nav.tabs button.on b{filter:none;opacity:1}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:620px;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto;animation:up .2s ease-out}
+@keyframes up{from{transform:translateY(30px);opacity:.4}}
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;z-index:30;font-weight:700}
+.demo{background:var(--accent);color:#fff;text-align:center;font-size:.85em;padding:7px;font-weight:700}.demo a{color:#fff}
+.empty{text-align:center;color:var(--muted);padding:16px}
+.burst{position:fixed;pointer-events:none;z-index:40;font-size:28px;animation:fly .9s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--dx),var(--dy)) rotate(var(--r));opacity:0}}
+.swatches{display:flex;gap:8px;margin-bottom:12px}.sw{flex:1;border:3px solid transparent;border-radius:12px;padding:10px 4px;color:#fff;font-weight:700;font-size:.8em;cursor:pointer}.sw.on{border-color:var(--ink)}
+.allDone{text-align:center;font-weight:800;padding:12px;border-radius:14px;margin-top:6px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="demoBar"></div>
+<header class="top"><div class="wrap"><div><div class="hello" id="hello"></div><h1 id="title">Today</h1></div><button class="iconbtn" data-act="settings" aria-label="Settings">⚙️</button></div></header>
+<main class="wrap" id="main"></main>
+<nav class="tabs"><div class="wrap" id="tabs"></div></nav>
+<div id="layer"></div>
+<script>
+"use strict";
+const EDITION = "full";
+const SHOP_URL = "https://ridhaprintstudio.etsy.com";
+const KEY = EDITION === "demo" ? "chores_demo_v1" : "chores_app_v1";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
+const pad = n => String(n).padStart(2, "0");
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const today = () => ymd(new Date());
+const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return ymd(d); };
+const dow = s => parse(s).getDay();
+const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const COLORS = ["#8b5cf6","#ff5fa2","#2f8be0","#1fa968","#ff9f43","#f5b700","#ff6b6b","#20c997"];
+const tint = (hex, a = .16) => hex + Math.round(a * 255).toString(16).padStart(2, "0");
+const AVATARS = ["🦄","🦖","🐼","🦊","🐸","🐯","🐨","🐙","🦁","🐰","🚀","⚽","🎨","🌸","👑","🤖"];
+const CHORE_EMOJI = ["🛏️","🦷","👕","🧸","🍽️","🗑️","🐶","🌱","📚","🧹","🧺","🚿","🥣","👟","🎒","🧽","🪥","🛁","🐟","🧃"];
+const SLOTS = [["morning","☀️ MORNING"],["afternoon","🌤️ AFTERNOON"],["evening","🌙 EVENING"],["any","⭐ ANYTIME"]];
+const PALETTES = [["berry","Berry","#8b5cf6,#ff5fa2"],["garden","Garden","#2f8a5f,#1f6f78"],["ocean","Ocean","#2a86d1,#1b4f9c"],["sunset","Sunset","#ff7a59,#d63f6b"]];
+const STARTER = [
+  ["Make bed","🛏️",1,"morning"],["Brush teeth","🦷",1,"morning"],["Get dressed","👕",1,"morning"],["Pack backpack","🎒",1,"morning"],
+  ["Tidy toys","🧸",2,"afternoon"],["Homework","📚",3,"afternoon"],["Feed the pet","🐶",2,"afternoon"],["Set the table","🍽️",2,"evening"],
+  ["Clear dishes","🥣",2,"evening"],["Bath / shower","🛁",1,"evening"],["Laundry to hamper","🧺",1,"evening"],["Take out trash","🗑️",3,"any"]];
+const STARTER_REWARDS = [["Extra screen time (30 min)","📱",15],["Pick dinner","🍕",20],["Stay up 30 min later","🌙",25],["Movie night pick","🎬",30],["Trip to the park","🛝",40],["Small toy / treat","🎁",60]];
+const STARTER_CLEAN = [["Wipe kitchen counters","Kitchen","daily"],["Dishes","Kitchen","daily"],["Quick tidy living room","Living room","daily"],["Clean bathroom sink & mirror","Bathroom","weekly"],["Vacuum floors","Whole home","weekly"],["Change bed sheets","Bedrooms","weekly"],["Mop floors","Whole home","weekly"],["Clean fridge","Kitchen","monthly"],["Dust ceiling fans","Whole home","monthly"],["Wash windows","Whole home","monthly"]];
+
+function blank() { return { v: 1, setup: false, theme: "auto", palette: "berry", text: "normal", pin: "", kids: [], chores: [], done: {}, rewards: [], redeemed: [], clean: [], family: "" }; }
+function sample() {
+  const s = blank(); s.setup = true; s.family = "Rivera";
+  const a = {id: uid(), name: "Mia", emoji: "🦄", color: "#ff5fa2", points: 34}, b = {id: uid(), name: "Leo", emoji: "🦖", color: "#2f8be0", points: 21};
+  s.kids = [a, b];
+  s.chores = STARTER.slice(0, 10).map(([n, e, p, sl], i) => ({id: uid(), name: n, emoji: e, pts: p, slot: sl, days: [0,1,2,3,4,5,6], kids: i === 3 || i === 5 ? [a.id] : i === 6 ? [b.id] : [a.id, b.id]}));
+  const t = today();
+  for (let d = 1; d <= 5; d++) { const day = addDays(t, -d); s.done[day] = {}; s.chores.forEach((c, i) => c.kids.forEach((k, j) => { if ((i + j + d) % 3) s.done[day][c.id + "|" + k] = c.pts; })); }
+  s.done[t] = {}; s.chores.slice(0, 3).forEach(c => s.done[t][c.id + "|" + a.id] = c.pts); s.done[t][s.chores[0].id + "|" + b.id] = s.chores[0].pts;
+  s.rewards = STARTER_REWARDS.map(([n, e, c]) => ({id: uid(), name: n, emoji: e, cost: c}));
+  s.clean = STARTER_CLEAN.map(([n, r, f], i) => ({id: uid(), name: n, room: r, freq: f, last: i % 3 === 0 ? t : addDays(t, -(i + 2))}));
+  return s;
+}
+let S = load();
+function load() { try { const r = localStorage.getItem(KEY); if (r) return Object.assign(blank(), JSON.parse(r)); } catch (e) {} return EDITION === "demo" ? sample() : blank(); }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+const kidById = id => S.kids.find(k => k.id === id);
+const choresFor = (kidId, day) => S.chores.filter(c => c.kids.includes(kidId) && c.days.includes(dow(day)));
+const isDone = (c, kidId, day) => !!(S.done[day] && S.done[day][c.id + "|" + kidId]);
+function dayStats(kidId, day) { const list = choresFor(kidId, day); const d = list.filter(c => isDone(c, kidId, day)).length; return {total: list.length, done: d}; }
+function streak(kidId) { let n = 0, d = addDays(today(), -1); for (let i = 0; i < 365; i++) { const s = dayStats(kidId, d); if (!s.total) { d = addDays(d, -1); continue; } if (s.done === s.total) { n++; d = addDays(d, -1); } else break; } const t = dayStats(kidId, today()); return n + (t.total && t.done === t.total ? 1 : 0); }
+const roomEmoji = r => ({kitchen:"🍳",bathroom:"🛁",bedrooms:"🛏️",bedroom:"🛏️","living room":"🛋️",laundry:"🧺",garage:"🚗",yard:"🌳"})[String(r).toLowerCase()] || "🏠";
+const cleanDue = c => { const age = c.last ? Math.round((parse(today()) - parse(c.last)) / 864e5) : 999; const per = {daily: 1, weekly: 7, monthly: 30}[c.freq] || 7; return {due: age >= per, inDays: Math.max(0, per - age)}; };
+
+/* chrome */
+const TABS = [["today","Today","✅"],["week","Chart","📅"],["rewards","Rewards","🎁"],["home","Cleaning","🧽"],["family","Family","👨‍👩‍👧"]];
+let tab = "today", kidSel = "all", weekOff = 0, unlocked = false;
+function applyTheme() { const dark = S.theme === "dark" || (S.theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches); document.documentElement.dataset.theme = dark ? "dark" : "light"; document.documentElement.dataset.palette = S.palette; document.documentElement.dataset.text = S.text; }
+function render() {
+  applyTheme();
+  $("#tabs").innerHTML = TABS.map(([id, l, e]) => `<button class="${tab === id ? "on" : ""}" data-tab="${id}"><b>${e}</b>${l}</button>`).join("");
+  $("#demoBar").innerHTML = EDITION === "demo" ? `<div class="demo">Demo with a sample family · <a href="${SHOP_URL}" target="_blank" rel="noopener">Get the full app</a></div>` : "";
+  $("#hello").textContent = (S.family ? `The ${S.family} family · ` : "") + new Date().toLocaleDateString(undefined, {weekday: "long", month: "short", day: "numeric"});
+  $("#title").textContent = TABS.find(t => t[0] === tab)[1];
+  if (!S.setup) { $("#main").innerHTML = ""; return openSetup(); }
+  $("#main").innerHTML = ({today: vToday, week: vWeek, rewards: vRewards, home: vHome, family: vFamily})[tab]();
+}
+const kidTabs = (all = true) => `<div class="kidtabs">${all ? `<button class="chip ${kidSel === "all" ? "on" : ""}" data-kid="all">👨‍👩‍👧 Everyone</button>` : ""}${S.kids.map(k => `<button class="chip ${kidSel === k.id ? "on" : ""}" data-kid="${k.id}" style="--cc:${k.color}">${k.emoji} ${esc(k.name)}</button>`).join("")}</div>`;
+
+/* TODAY */
+function vToday() {
+  if (!S.kids.length) return `<div class="card empty">Add your kids in the Family tab to start.</div>`;
+  const t = today(); const kids = kidSel === "all" ? S.kids : S.kids.filter(k => k.id === kidSel);
+  let tot = 0, dn = 0; S.kids.forEach(k => { const s = dayStats(k.id, t); tot += s.total; dn += s.done; });
+  let out = `<section class="card hero"><div class="small" style="opacity:.9">Family progress today</div><div style="font-size:2.2em;font-weight:900;line-height:1.1;margin:4px 0">${dn} of ${tot} chores</div><div class="bar" style="background:rgba(255,255,255,.3)"><i style="width:${tot ? dn / tot * 100 : 0}%;background:#fff"></i></div><div class="small" style="margin-top:8px">${dn === tot && tot ? "🎉 Everything's done. Amazing teamwork!" : "Tap a chore when it's done to earn stars ⭐"}</div></section>`;
+  out += kidTabs();
+  for (const k of kids) {
+    const list = choresFor(k.id, t); const s = dayStats(k.id, t); const st = streak(k.id);
+    out += `<section class="card" style="border-top:6px solid ${k.color}"><div class="row"><div class="row" style="gap:12px"><div class="avatar" style="background:${tint(k.color)}">${k.emoji}</div><div><div style="font-weight:800;font-size:1.1em">${esc(k.name)}</div><div class="small muted">${s.done}/${s.total} done${st ? ` · 🔥 ${st}-day streak` : ""}</div></div></div><span class="badge pts" style="background:${tint(k.color)};color:${k.color}">⭐ ${k.points}</span></div>
+    <div class="bar" style="margin:12px 0 4px"><i style="width:${s.total ? s.done / s.total * 100 : 0}%;background:${k.color}"></i></div>`;
+    for (const [slot, lbl] of SLOTS) {
+      const sl = list.filter(c => c.slot === slot); if (!sl.length) continue;
+      out += `<div class="slot">${lbl}</div>` + sl.map(c => { const d = isDone(c, k.id, t); return `<div class="chore ${d ? "done" : ""}" data-act="toggle" data-c="${c.id}" data-k="${k.id}" style="background:${tint(k.color, d ? .1 : .14)};color:${k.color}"><span class="em">${c.emoji}</span><span class="nm" style="color:var(--ink)">${esc(c.name)}</span><span class="badge" style="background:var(--card);color:${k.color}">+${c.pts}⭐</span><span class="ck"></span></div>`; }).join("");
+    }
+    if (!list.length) out += `<div class="empty">No chores today 🎈</div>`;
+    else if (s.done === s.total) out += `<div class="allDone" style="background:${tint(k.color)};color:${k.color}">🏆 All done, ${esc(k.name)}!</div>`;
+    out += `</section>`;
+  }
+  return out;
+}
+/* WEEK CHART */
+function vWeek() {
+  const start = addDays(today(), -6 + weekOff * 7); const days = Array.from({length: 7}, (_, i) => addDays(start, i));
+  if (kidSel === "all" && S.kids[0]) kidSel = S.kids[0].id;
+  const k = kidById(kidSel); if (!k) return `<div class="card empty">Add a kid first.</div>`;
+  const list = S.chores.filter(c => c.kids.includes(k.id));
+  let stars = 0; days.forEach(d => list.forEach(c => { if (isDone(c, k.id, d)) stars++; }));
+  let out = kidTabs(false) + `<section class="card"><div class="row"><button class="btn ghost" data-act="wk" data-d="-1">‹ Prev</button><b>${parse(days[0]).toLocaleDateString(undefined, {month: "short", day: "numeric"})} – ${parse(days[6]).toLocaleDateString(undefined, {month: "short", day: "numeric"})}</b><button class="btn ghost" data-act="wk" data-d="1" ${weekOff >= 0 ? "disabled style='opacity:.3'" : ""}>Next ›</button></div>
+  <div class="row" style="margin:6px 0 10px"><div class="row" style="gap:10px"><div class="avatar" style="background:${tint(k.color)}">${k.emoji}</div><b>${esc(k.name)}'s chart</b></div><span class="badge" style="background:${tint(k.color)};color:${k.color}">⭐ ${stars} stars this week</span></div>
+  <div style="overflow-x:auto"><table class="wk"><colgroup><col class="l"></colgroup><tr><th></th>${days.map(d => `<th style="${d === today() ? `color:${k.color}` : ""}">${DAYS[dow(d)]}<br>${parse(d).getDate()}</th>`).join("")}</tr>
+  ${list.map(c => `<tr><td class="lbl">${c.emoji} ${esc(c.name)}</td>${days.map(d => { const sch = c.days.includes(dow(d)); const dn = isDone(c, k.id, d); return `<td class="cell" style="background:${!sch ? "transparent" : dn ? k.color : tint(k.color, .12)}">${!sch ? "·" : dn ? "⭐" : ""}</td>`; }).join("")}</tr>`).join("")}
+  </table></div></section><p class="small muted" style="text-align:center">Tip: print-free! This chart fills in automatically as chores get checked.</p>`;
+  return out;
+}
+/* REWARDS */
+function vRewards() {
+  let out = `<section class="card"><h2>⭐ Star balance</h2><div class="chips">${S.kids.map(k => `<span class="chip" style="border-color:${k.color};color:${k.color}">${k.emoji} ${esc(k.name)} · <b class="pts">${k.points}</b></span>`).join("")}</div></section>`;
+  out += `<section class="card"><div class="row"><h2>Reward shop</h2><button class="btn ghost" data-act="editReward">+ Add</button></div><div class="rewards">${S.rewards.map((r, i) => { const c = COLORS[i % COLORS.length]; return `<div class="rw" style="background:${tint(c, .14)}"><div class="e">${r.emoji}</div><div style="font-weight:700;margin:4px 0">${esc(r.name)}</div><div class="badge" style="background:var(--card);color:${c};display:inline-block">⭐ ${r.cost}</div><div style="margin-top:8px"><button class="btn" style="background:${c};padding:8px 14px;min-height:0" data-act="redeem" data-id="${r.id}">Redeem</button></div><button class="btn ghost small" data-act="editReward" data-id="${r.id}">Edit</button></div>`; }).join("")}</div></section>`;
+  const hist = S.redeemed.slice(-8).reverse();
+  if (hist.length) out += `<section class="card"><h2>Recently redeemed</h2><ul class="list">${hist.map(h => { const k = kidById(h.kidId); return `<li><div class="avatar" style="background:${tint(k ? k.color : "#999")}">${k ? k.emoji : "?"}</div><div class="grow">${esc(h.name)}<div class="small muted">${new Date(h.ts).toLocaleDateString()}</div></div><b>−${h.cost}⭐</b></li>`; }).join("")}</ul></section>`;
+  return out;
+}
+/* CLEANING */
+function vHome() {
+  const due = S.clean.filter(c => cleanDue(c).due), later = S.clean.filter(c => !cleanDue(c).due).sort((a, b) => cleanDue(a).inDays - cleanDue(b).inDays);
+  const fc = {daily: "#ff9f43", weekly: "#2f8be0", monthly: "#8b5cf6"};
+  const row = c => { const d = cleanDue(c); return `<li><div class="avatar" style="background:${tint(fc[c.freq])};font-size:1.3em">${roomEmoji(c.room)}</div><div class="grow" data-act="editClean" data-id="${c.id}" style="cursor:pointer"><div class="ellip" style="font-weight:600">${esc(c.name)}</div><div class="small muted">${esc(c.room)} · <span style="color:${fc[c.freq]};font-weight:700">${c.freq}</span>${d.due ? "" : ` · in ${d.inDays}d`}</div></div>${d.due ? `<button class="btn" style="background:${fc[c.freq]};padding:8px 14px;min-height:0" data-act="cleaned" data-id="${c.id}">Done</button>` : `<span class="badge" style="background:${tint("#1fa968")};color:#1fa968">✓</span>`}</li>`; };
+  return `<section class="card hero"><div class="small" style="opacity:.9">Home reset</div><div style="font-size:2em;font-weight:900">${due.length ? due.length + " task" + (due.length > 1 ? "s" : "") + " due" : "All caught up ✨"}</div><div class="small">Daily, weekly and monthly cleaning in one calm list.</div></section>
+  <section class="card"><div class="row"><h2>Due now</h2><button class="btn ghost" data-act="editClean">+ Add</button></div>${due.length ? `<ul class="list">${due.map(row).join("")}</ul>` : `<div class="empty">Nothing due. Enjoy your clean home 🌿</div>`}</section>
+  <section class="card"><h2>Coming up</h2><ul class="list">${later.map(row).join("")}</ul></section>`;
+}
+/* FAMILY (manage) */
+function vFamily() {
+  if (S.pin && !unlocked) return `<section class="card" style="text-align:center"><div style="font-size:2.4em">🔒</div><h2>Parents only</h2><p class="muted small">Enter your parent PIN to edit kids, chores and rewards.</p><input class="in" id="pinIn" inputmode="numeric" maxlength="6" style="text-align:center;font-size:1.4em;max-width:200px"><div style="margin-top:12px"><button class="btn" data-act="unlock">Unlock</button></div></section>`;
+  let out = `<section class="card"><div class="row"><h2>Kids</h2><button class="btn ghost" data-act="editKid">+ Add kid</button></div><ul class="list">${S.kids.map(k => `<li data-act="editKid" data-id="${k.id}" style="cursor:pointer"><div class="avatar" style="background:${tint(k.color)}">${k.emoji}</div><div class="grow"><b>${esc(k.name)}</b><div class="small muted">${S.chores.filter(c => c.kids.includes(k.id)).length} chores · ⭐ ${k.points}</div></div><span class="muted">›</span></li>`).join("")}</ul></section>`;
+  out += `<section class="card"><div class="row"><h2>Chores</h2><button class="btn ghost" data-act="editChore">+ Add chore</button></div><ul class="list">${S.chores.map(c => `<li data-act="editChore" data-id="${c.id}" style="cursor:pointer"><div class="avatar" style="background:var(--brand-2)">${c.emoji}</div><div class="grow"><div class="ellip" style="font-weight:600">${esc(c.name)}</div><div class="small muted">${c.kids.map(id => kidById(id)?.emoji || "").join(" ")} · ${c.days.length === 7 ? "every day" : c.days.map(d => DAYS[d]).join(", ")} · +${c.pts}⭐</div></div><span class="muted">›</span></li>`).join("")}</ul></section>`;
+  out += `<section class="card"><h2>Parent PIN</h2><p class="small muted" style="margin-top:0">Optional. Locks the Family tab and redeeming rewards so kids can only tick their chores.</p><div class="row"><input class="in" id="newPin" inputmode="numeric" maxlength="6" placeholder="${S.pin ? "PIN is set" : "e.g. 1234"}"><button class="btn secondary" data-act="setPin">${S.pin ? "Change" : "Set"}</button>${S.pin ? `<button class="btn danger" data-act="clearPin">Remove</button>` : ""}</div></section>`;
+  return out;
+}
+
+/* sheets */
+function sheet(html) { $("#layer").innerHTML = `<div class="sheet-bg" data-close="1"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`; }
+const close = () => $("#layer").innerHTML = "";
+function toast(m) { const t = document.createElement("div"); t.className = "toast"; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 1800); }
+const val = n => $(`#layer [name="${n}"]`)?.value ?? "";
+let pending = null;
+const ask = (msg, fn, yes = "Delete") => { pending = fn; sheet(`<h2>${esc(msg)}</h2><div class="row" style="margin-top:14px"><button class="btn secondary" data-close="1" style="flex:1">Cancel</button><button class="btn" style="flex:1;background:#e5484d" data-act="confirmYes">${esc(yes)}</button></div>`); };
+const pick = (name, list, cur) => `<div class="chips" data-pick="${name}" style="margin-bottom:12px">${list.map(v => `<button class="chip ${v === cur ? "on" : ""}" data-v="${esc(v)}">${v}</button>`).join("")}</div>`;
+const picked = name => $(`#layer [data-pick="${name}"] .on`)?.dataset.v;
+const multi = name => [...document.querySelectorAll(`#layer [data-multi="${name}"] .on`)].map(b => b.dataset.v);
+const demoBlock = what => { if (EDITION !== "demo") return false; sheet(`<h2>That's in the full app</h2><p>The demo lets you tick chores, redeem rewards and look around. ${what} is unlocked in the full app.</p><a class="btn full" style="display:block;text-align:center;text-decoration:none" href="${SHOP_URL}" target="_blank" rel="noopener">Get the full app</a>`); return true; };
+
+function openKid(id) {
+  const k = kidById(id) || {name: "", emoji: AVATARS[S.kids.length % AVATARS.length], color: COLORS[S.kids.length % COLORS.length]};
+  sheet(`<h2>${id ? "Edit kid" : "Add a kid"}</h2><label class="f"><span>Name</span><input class="in" name="name" value="${esc(k.name)}" placeholder="e.g. Mia"></label><span class="small muted">Avatar</span>${pick("emoji", AVATARS, k.emoji)}<span class="small muted">Color</span><div class="chips" data-pick="color" style="margin-bottom:14px">${COLORS.map(c => `<button class="chip ${c === k.color ? "on" : ""}" data-v="${c}" style="--cc:${c};background:${c};border-color:${c};width:40px"></button>`).join("")}</div><button class="btn full" data-act="saveKid" data-id="${id || ""}">Save</button>${id ? `<button class="btn danger full" data-act="delKid" data-id="${id}">Remove kid</button>` : ""}`);
+}
+function openChore(id) {
+  const c = S.chores.find(x => x.id === id) || {name: "", emoji: "🧹", pts: 2, slot: "any", days: [0,1,2,3,4,5,6], kids: S.kids.map(k => k.id)};
+  sheet(`<h2>${id ? "Edit chore" : "Add a chore"}</h2><label class="f"><span>Chore</span><input class="in" name="name" value="${esc(c.name)}" placeholder="e.g. Feed the cat"></label><span class="small muted">Icon</span>${pick("emoji", CHORE_EMOJI, c.emoji)}
+  <span class="small muted">Who does it?</span><div class="chips" data-multi="kids" style="margin-bottom:12px">${S.kids.map(k => `<button class="chip ${c.kids.includes(k.id) ? "on" : ""}" data-v="${k.id}" style="--cc:${k.color}">${k.emoji} ${esc(k.name)}</button>`).join("")}</div>
+  <span class="small muted">Which days?</span><div class="chips" data-multi="days" style="margin-bottom:12px">${DAYS.map((d, i) => `<button class="chip ${c.days.includes(i) ? "on" : ""}" data-v="${i}">${d}</button>`).join("")}</div>
+  <span class="small muted">When?</span><div class="chips" data-pick="slot" style="margin-bottom:12px">${SLOTS.map(([v, l]) => `<button class="chip ${v === c.slot ? "on" : ""}" data-v="${v}">${l.split(" ")[0]} ${v}</button>`).join("")}</div>
+  <span class="small muted">Stars earned</span>${pick("pts", ["1","2","3","4","5"], String(c.pts))}
+  <button class="btn full" data-act="saveChore" data-id="${id || ""}">Save</button>${id ? `<button class="btn danger full" data-act="delChore" data-id="${id}">Delete chore</button>` : ""}`);
+}
+function openReward(id) {
+  const r = S.rewards.find(x => x.id === id) || {name: "", emoji: "🎁", cost: 20};
+  sheet(`<h2>${id ? "Edit reward" : "Add a reward"}</h2><label class="f"><span>Reward</span><input class="in" name="name" value="${esc(r.name)}" placeholder="e.g. Ice cream trip"></label>${pick("emoji", ["🎁","📱","🍕","🍦","🎬","🛝","🎮","🧸","🌙","⚽","🎨","💵"], r.emoji)}<label class="f"><span>Cost in stars</span><input class="in" name="cost" inputmode="numeric" value="${r.cost}"></label><button class="btn full" data-act="saveReward" data-id="${id || ""}">Save</button>${id ? `<button class="btn danger full" data-act="delReward" data-id="${id}">Delete</button>` : ""}`);
+}
+function openClean(id) {
+  const c = S.clean.find(x => x.id === id) || {name: "", room: "Kitchen", freq: "weekly"};
+  sheet(`<h2>${id ? "Edit task" : "Add cleaning task"}</h2><label class="f"><span>Task</span><input class="in" name="name" value="${esc(c.name)}"></label><label class="f"><span>Room</span><input class="in" name="room" value="${esc(c.room)}"></label>${pick("freq", ["daily","weekly","monthly"], c.freq)}<button class="btn full" data-act="saveClean" data-id="${id || ""}">Save</button>${id ? `<button class="btn danger full" data-act="delClean" data-id="${id}">Delete</button>` : ""}`);
+}
+function openSettings() {
+  sheet(`<h2>Settings</h2><label class="f"><span>Family name (optional)</span><input class="in" name="family" value="${esc(S.family)}"></label>
+  <span class="small muted">Colors</span><div class="swatches" id="palPick">${PALETTES.map(([k, n, g]) => `<button class="sw ${k === S.palette ? "on" : ""}" data-pal="${k}" style="background:linear-gradient(135deg,${g})">${n}</button>`).join("")}</div>
+  <div class="row"><label class="f" style="flex:1"><span>Theme</span><select class="in" name="theme">${[["auto","Match phone"],["light","Light"],["dark","Dark"]].map(([k, v]) => `<option value="${k}" ${k === S.theme ? "selected" : ""}>${v}</option>`).join("")}</select></label><label class="f" style="flex:1"><span>Text size</span><select class="in" name="text"><option value="normal">Normal</option><option value="large" ${S.text === "large" ? "selected" : ""}>Large</option></select></label></div>
+  <button class="btn full" data-act="saveSettings">Save</button>
+  <h2 style="margin-top:18px">Install on your phone</h2><p class="small muted" style="margin-top:0"><b>iPhone:</b> Safari → Share → Add to Home Screen. <b>Android:</b> Chrome ⋮ → Install app.</p>
+  <h2>Backup</h2><div class="row"><button class="btn secondary" style="flex:1" data-act="export">Save backup</button><button class="btn secondary" style="flex:1" data-act="import">Restore</button></div><input type="file" id="importFile" accept=".json" style="display:none">
+  <button class="btn danger full" data-act="reset" style="margin-top:10px">Erase everything</button><p class="small muted" style="text-align:center">Family Chore Chart · RidhaPrintStudio</p>`);
+}
+let setupStep = 0, draftKids = [], draftChores = STARTER.map(s => s[0]);
+function openSetup() {
+  const steps = [
+    () => `<div style="text-align:center;font-size:3em">🏡</div><h2 style="text-align:center;font-size:1.3em">Welcome! Let's set up your family chore chart.</h2><p class="muted" style="text-align:center">2 quick steps. No account. Everything stays on this device.</p>`,
+    () => `<h2>Who's helping out?</h2><div class="chips" style="margin-bottom:10px">${draftKids.map((k, i) => `<span class="chip on" style="--cc:${COLORS[i % 8]}">${k.emoji} ${esc(k.name)}</span>`).join("") || `<span class="muted small">Add each kid below.</span>`}</div><div class="row"><input class="in" name="kname" placeholder="Kid's name"><button class="btn secondary" data-act="setupKid">Add</button></div>`,
+    () => `<h2>Pick starter chores</h2><p class="small muted" style="margin-top:0">Tap to turn on/off. You can edit everything later.</p><div class="chips" data-multi="starter">${STARTER.map(([n, e]) => `<button class="chip ${draftChores.includes(n) ? "on" : ""}" data-v="${esc(n)}">${e} ${esc(n)}</button>`).join("")}</div>`
+  ];
+  sheet(`${steps[setupStep]()}<div class="row" style="margin-top:16px">${setupStep ? `<button class="btn secondary" data-act="setupBack" style="flex:1">Back</button>` : ""}<button class="btn" data-act="setupNext" style="flex:1">${setupStep === 2 ? "Start my chart 🎉" : "Next"}</button></div>`);
+  $("#layer .sheet-bg").removeAttribute("data-close");
+}
+function burst(x, y, color) { const em = ["⭐","✨","🌟","💫"]; for (let i = 0; i < 10; i++) { const s = document.createElement("span"); s.className = "burst"; s.textContent = em[i % 4]; s.style.left = x + "px"; s.style.top = y + "px"; s.style.setProperty("--dx", (Math.random() * 160 - 80) + "px"); s.style.setProperty("--dy", (-Math.random() * 140 - 20) + "px"); s.style.setProperty("--r", (Math.random() * 360) + "deg"); document.body.appendChild(s); setTimeout(() => s.remove(), 950); } }
+
+const A = {
+  settings: openSettings, editKid: e => openKid(e.dataset.id), editChore: e => openChore(e.dataset.id), editReward: e => openReward(e.dataset.id), editClean: e => openClean(e.dataset.id),
+  confirmYes() { const f = pending; pending = null; close(); f && f(); },
+  toggle(e, ev) {
+    const t = today(); const c = S.chores.find(x => x.id === e.dataset.c); const k = kidById(e.dataset.k); if (!c || !k) return;
+    S.done[t] = S.done[t] || {}; const key = c.id + "|" + k.id;
+    if (S.done[t][key]) { k.points = Math.max(0, k.points - S.done[t][key]); delete S.done[t][key]; }
+    else { S.done[t][key] = c.pts; k.points += c.pts; const r = e.getBoundingClientRect(); burst(r.right - 30, r.top + 10); const s = dayStats(k.id, t); if (s.done === s.total) setTimeout(() => toast(`🏆 ${k.name} finished everything!`), 200); }
+    save(); render();
+  },
+  wk(e) { weekOff = Math.min(0, weekOff + Number(e.dataset.d)); render(); },
+  redeem(e) {
+    const r = S.rewards.find(x => x.id === e.dataset.id);
+    if (S.pin && !unlocked) return sheet(`<h2>Parent PIN</h2><input class="in" id="pinIn2" inputmode="numeric" maxlength="6" style="text-align:center;font-size:1.4em"><button class="btn full" style="margin-top:12px" data-act="unlock2" data-id="${r.id}">Continue</button>`);
+    sheet(`<h2>${r.emoji} ${esc(r.name)}</h2><p class="muted">Costs ⭐ ${r.cost}. Who's redeeming?</p><div class="chips">${S.kids.map(k => `<button class="chip" style="--cc:${k.color};${k.points < r.cost ? "opacity:.45" : ""}" data-act="doRedeem" data-r="${r.id}" data-k="${k.id}" ${k.points < r.cost ? "disabled" : ""}>${k.emoji} ${esc(k.name)} (⭐${k.points})</button>`).join("")}</div>`);
+  },
+  doRedeem(e) { const r = S.rewards.find(x => x.id === e.dataset.r), k = kidById(e.dataset.k); if (k.points < r.cost) return; k.points -= r.cost; S.redeemed.push({id: uid(), kidId: k.id, rewardId: r.id, name: r.name, cost: r.cost, ts: Date.now()}); save(); close(); render(); const b = e.getBoundingClientRect(); burst(innerWidth / 2, innerHeight / 2); toast(`🎉 ${k.name} got: ${r.name}`); },
+  unlock() { if ($("#pinIn").value === S.pin) { unlocked = true; render(); } else toast("Wrong PIN"); },
+  unlock2(e) { if ($("#pinIn2").value === S.pin) { unlocked = true; close(); A.redeem(e); } else toast("Wrong PIN"); },
+  setPin() { if (demoBlock("A parent PIN")) return; const p = $("#newPin").value.trim(); if (!/^\d{4,6}$/.test(p)) return toast("Use 4–6 digits"); S.pin = p; unlocked = true; save(); render(); toast("PIN set 🔒"); },
+  clearPin() { S.pin = ""; save(); render(); },
+  cleaned(e) { const c = S.clean.find(x => x.id === e.dataset.id); c.last = today(); save(); const r = e.getBoundingClientRect(); burst(r.left, r.top); render(); toast("✨ Sparkling!"); },
+  saveKid(e) { const id = e.dataset.id; if (!id && EDITION === "demo" && S.kids.length >= 3) return demoBlock("Adding more kids"); const name = val("name").trim(); if (!name) return toast("Add a name"); const o = {name, emoji: picked("emoji") || "🦄", color: picked("color") || COLORS[0]}; if (id) Object.assign(kidById(id), o); else { const k = {id: uid(), points: 0, ...o}; S.kids.push(k); } save(); close(); render(); },
+  delKid(e) { ask("Remove this kid and their stars?", () => { const id = e.dataset.id; S.kids = S.kids.filter(k => k.id !== id); S.chores.forEach(c => c.kids = c.kids.filter(x => x !== id)); if (kidSel === id) kidSel = "all"; save(); render(); }, "Remove"); },
+  saveChore(e) { const id = e.dataset.id; if (!id && EDITION === "demo" && S.chores.length >= 14) return demoBlock("Adding more chores"); const name = val("name").trim(); if (!name) return toast("Name the chore"); const kids = multi("kids"), days = multi("days").map(Number); if (!kids.length || !days.length) return toast("Pick at least one kid and day"); const o = {name, emoji: picked("emoji") || "🧹", kids, days, slot: picked("slot") || "any", pts: Number(picked("pts") || 1)}; if (id) Object.assign(S.chores.find(c => c.id === id), o); else S.chores.push({id: uid(), ...o}); save(); close(); render(); },
+  delChore(e) { ask("Delete this chore?", () => { S.chores = S.chores.filter(c => c.id !== e.dataset.id); save(); render(); }); },
+  saveReward(e) { const id = e.dataset.id; const name = val("name").trim(); const cost = Math.max(1, parseInt(val("cost")) || 0); if (!name) return toast("Name the reward"); const o = {name, cost, emoji: picked("emoji") || "🎁"}; if (id) Object.assign(S.rewards.find(r => r.id === id), o); else S.rewards.push({id: uid(), ...o}); save(); close(); render(); },
+  delReward(e) { ask("Delete this reward?", () => { S.rewards = S.rewards.filter(r => r.id !== e.dataset.id); save(); render(); }); },
+  saveClean(e) { const id = e.dataset.id; const name = val("name").trim(); if (!name) return toast("Name the task"); const o = {name, room: val("room").trim() || "Home", freq: picked("freq") || "weekly"}; if (id) Object.assign(S.clean.find(c => c.id === id), o); else S.clean.push({id: uid(), last: "", ...o}); save(); close(); render(); },
+  delClean(e) { ask("Delete this task?", () => { S.clean = S.clean.filter(c => c.id !== e.dataset.id); save(); render(); }); },
+  saveSettings() { S.family = val("family").trim(); S.theme = val("theme"); S.text = val("text"); S.palette = $("#palPick .on")?.dataset.pal || S.palette; save(); close(); render(); toast("Saved ✓"); },
+  export() { if (demoBlock("Backups")) return; const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], {type: "application/json"})); a.download = `chores-backup-${today()}.json`; a.click(); },
+  import() { $("#importFile").click(); },
+  reset() { ask("Erase everything on this device?", () => { S = EDITION === "demo" ? sample() : blank(); setupStep = 0; draftKids = []; save(); render(); }, "Erase"); },
+  setupKid() { const n = val("kname").trim(); if (!n) return toast("Type a name"); draftKids.push({name: n, emoji: AVATARS[draftKids.length % AVATARS.length]}); openSetup(); },
+  setupBack() { setupStep--; openSetup(); },
+  setupNext() {
+    if (setupStep === 1) { const n = val("kname").trim(); if (n) draftKids.push({name: n, emoji: AVATARS[draftKids.length % AVATARS.length]}); if (!draftKids.length) return toast("Add at least one kid"); }
+    if (setupStep === 2) draftChores = multi("starter");
+    if (setupStep < 2) { setupStep++; return openSetup(); }
+    S.kids = draftKids.map((k, i) => ({id: uid(), name: k.name, emoji: k.emoji, color: COLORS[i % COLORS.length], points: 0}));
+    const ids = S.kids.map(k => k.id);
+    S.chores = STARTER.filter(s => draftChores.includes(s[0])).map(([n, e, p, sl]) => ({id: uid(), name: n, emoji: e, pts: p, slot: sl, days: [0,1,2,3,4,5,6], kids: [...ids]}));
+    S.rewards = STARTER_REWARDS.map(([n, e, c]) => ({id: uid(), name: n, emoji: e, cost: c}));
+    S.clean = STARTER_CLEAN.map(([n, r, f]) => ({id: uid(), name: n, room: r, freq: f, last: ""}));
+    S.setup = true; save(); close(); tab = "today"; render(); toast("Your chart is ready 🎉");
+  }
+};
+document.addEventListener("click", e => {
+  const bg = e.target.closest("[data-close]"); if (bg && (e.target === bg || e.target.dataset.close)) return close();
+  const tb = e.target.closest("[data-tab]"); if (tb) { tab = tb.dataset.tab; render(); scrollTo(0, 0); return; }
+  const kd = e.target.closest("[data-kid]"); if (kd) { kidSel = kd.dataset.kid; render(); return; }
+  const pal = e.target.closest("[data-pal]"); if (pal) { pal.parentElement.querySelectorAll(".sw").forEach(x => x.classList.toggle("on", x === pal)); document.documentElement.dataset.palette = pal.dataset.pal; return; }
+  const pk = e.target.closest("[data-pick] [data-v]"); if (pk) { pk.parentElement.querySelectorAll("[data-v]").forEach(x => x.classList.toggle("on", x === pk)); return; }
+  const mu = e.target.closest("[data-multi] [data-v]"); if (mu) { mu.classList.toggle("on"); return; }
+  const a = e.target.closest("[data-act]"); if (a && A[a.dataset.act]) A[a.dataset.act](a, e);
+});
+document.addEventListener("change", e => { if (e.target.id === "importFile" && e.target.files[0]) e.target.files[0].text().then(t => { const d = JSON.parse(t); if (!Array.isArray(d.kids)) throw 0; S = Object.assign(blank(), d); save(); close(); render(); toast("Restored ✓"); }).catch(() => toast("Not a chore backup")); });
+document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.name === "kname") A.setupKid(); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", applyTheme);
+render();
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
