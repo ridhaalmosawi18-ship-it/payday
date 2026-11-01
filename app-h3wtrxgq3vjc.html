@@ -24,6 +24,13 @@
   --good:#5cc08d; --warn:#e0a24f; --bad:#ef7a6f; --shadow:none;
 }
 :root[data-text="large"]{--fs:18.5px}
+:root{--h1:#2f8a5f;--h2:#1f6f78;--pop1:#ffd27a;--pop2:#7be0b0}
+:root[data-palette="berry"]{--brand:#a23b8f;--brand-2:#fbe8f4;--accent:#ff6f91;--accent-2:#ffeef3;--h1:#b8418f;--h2:#6a3fb5;--pop1:#ffd1e6;--pop2:#c7b5ff}
+:root[data-palette="ocean"]{--brand:#1f6fb2;--brand-2:#e5f1fb;--accent:#ff9f43;--accent-2:#fff3e6;--h1:#2a86d1;--h2:#1b4f9c;--pop1:#ffe08a;--pop2:#8fd3ff}
+:root[data-palette="sunset"]{--brand:#d9534f;--brand-2:#fdecea;--accent:#7c5cff;--accent-2:#efeaff;--h1:#ff7a59;--h2:#d63f6b;--pop1:#ffe08a;--pop2:#ffc2a8}
+:root[data-theme="dark"][data-palette="berry"]{--brand:#e38bd0;--brand-2:#3a2235}
+:root[data-theme="dark"][data-palette="ocean"]{--brand:#7cc0ff;--brand-2:#1d2b3a}
+:root[data-theme="dark"][data-palette="sunset"]{--brand:#ff9b8a;--brand-2:#3a2422}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--fs)/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
@@ -38,8 +45,17 @@ h2{font-size:1.05em;margin:0 0 10px}
 .iconbtn svg{width:22px;height:22px}
 .card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin:0 0 12px;border:1px solid var(--line)}
 :root:not([data-theme="dark"]) .card{border-color:transparent}
-.hero{background:var(--brand);color:#fff;border:0}
-:root[data-theme="dark"] .hero{background:#1f3b2d}
+.hero{background:linear-gradient(135deg,var(--h1),var(--h2));color:#fff;border:0;position:relative;overflow:hidden}
+.hero>*{position:relative;z-index:1}
+.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;z-index:0;opacity:.35}
+.hero:before{width:220px;height:220px;right:-60px;top:-70px;background:var(--pop1)}
+.hero:after{width:150px;height:150px;right:70px;bottom:-80px;background:var(--pop2)}
+:root[data-theme="dark"] .hero{filter:saturate(.9) brightness(.85)}
+.kcard{border:0!important}
+.kcard .kpi{font-size:1.6em}
+.swatches{display:flex;gap:10px;margin:4px 0 14px}
+.sw{flex:1;border:3px solid transparent;border-radius:14px;padding:10px 6px;cursor:pointer;color:#fff;font-weight:700;font-size:.82em;text-align:center}
+.sw.on{border-color:var(--ink)}
 .hero .label{opacity:.85;font-size:.9em}
 .big{font-size:2.6em;font-weight:750;letter-spacing:-.02em;line-height:1.05;margin:4px 0 6px;font-variant-numeric:tabular-nums}
 .hero .sub{opacity:.92}
@@ -69,9 +85,10 @@ h2{font-size:1.05em;margin:0 0 10px}
 :root[data-theme="dark"] .tag.bad{background:#3a2220}
 .bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
 .bar>i{display:block;height:100%;background:var(--brand);border-radius:99px}
+nav.tabs button.on{color:var(--tc,var(--brand))}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 12px;cursor:pointer;min-height:40px}
-.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.chip.on{background:var(--cc,var(--brand));border-color:var(--cc,var(--brand));color:#fff}
 label.f{display:block;margin:0 0 12px}
 label.f span{display:block;font-size:.86em;color:var(--muted);margin-bottom:5px}
 input.in,select.in{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:12px;min-height:46px}
@@ -164,14 +181,21 @@ const fmtDate = s => parse(s).toLocaleDateString(undefined, {month: "short", day
 const fmtDay = s => { const n = daysBetween(today(), s); return n === 0 ? "Today" : n === 1 ? "Tomorrow" : n === -1 ? "Yesterday" : parse(s).toLocaleDateString(undefined, {weekday: "short", month: "short", day: "numeric"}); };
 
 const CATS = [
-  ["groceries","🛒","Groceries"],["gas","⛽","Gas"],["food","🍔","Food out"],["shopping","🛍️","Shopping"],
-  ["home","🏠","Home"],["kids","🧸","Kids"],["health","💊","Health"],["fun","🎉","Fun"],["gifts","🎁","Gifts"],["other","✳️","Other"]
+  ["groceries","🛒","Groceries","#22b573"],["gas","⛽","Gas","#ff9f43"],["food","🍔","Food out","#ff6b6b"],["shopping","🛍️","Shopping","#a66bff"],
+  ["home","🏠","Home","#4dabf7"],["kids","🧸","Kids","#f5b700"],["health","💊","Health","#ff6fa8"],["fun","🎉","Fun","#20c997"],["gifts","🎁","Gifts","#e64980"],["other","✳️","Other","#868e96"]
 ];
+const COLORS = ["#4dabf7","#ff6b6b","#a66bff","#ff9f43","#20c997","#f5b700","#ff6fa8","#22b573"];
+const colorAt = i => COLORS[((i % COLORS.length) + COLORS.length) % COLORS.length];
+const tint = (hex, a = .16) => hex + Math.round(a * 255).toString(16).padStart(2, "0");
+const icoS = hex => `style="background:${tint(hex)}"`;
+const TABC = {home: "", spend: "#ff6b6b", bills: "#4dabf7", goals: "#a66bff", debt: "#ff9f43"};
+const kcard = (hex, inner, cls = "") => `<section class="card kcard ${cls}" style="background:${tint(hex, .14)}">${inner.replace(/class="kpi"/g, `class="kpi" style="color:${hex}"`)}</section>`;
+const PALETTES = [["garden","Garden","#2f8a5f,#1f6f78"],["berry","Berry","#b8418f,#6a3fb5"],["ocean","Ocean","#2a86d1,#1b4f9c"],["sunset","Sunset","#ff7a59,#d63f6b"]];
 const catOf = id => CATS.find(c => c[0] === id) || CATS[CATS.length - 1];
 
 /* ---------- state ---------- */
 function blank() {
-  return { v: 1, setup: false, name: "", currency: "$", theme: "auto", text: "normal",
+  return { v: 1, setup: false, name: "", currency: "$", theme: "auto", text: "normal", palette: "garden",
     balance: 0, balanceTs: Date.now(), payFreq: "biweekly", nextPayday: addDays(today(), 7), payAmount: 0, buffer: 50,
     bills: [], tx: [], goals: [], debts: [], extraDebt: 50, pause: [], wins: 0 };
 }
@@ -247,11 +271,12 @@ const TABS = [
 ];
 let tab = "home";
 function renderTabs() {
-  $("#tabs").innerHTML = TABS.map(([id, label, path]) => `<button class="${tab === id ? "on" : ""}" data-tab="${id}" aria-label="${label}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>${label}</button>`).join("");
+  $("#tabs").innerHTML = TABS.map(([id, label, path]) => `<button class="${tab === id ? "on" : ""}" data-tab="${id}" aria-label="${label}" ${TABC[id] ? `style="--tc:${TABC[id]}"` : ""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>${label}</button>`).join("");
 }
 function applyTheme() {
   const dark = S.theme === "dark" || (S.theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches);
   document.documentElement.dataset.theme = dark ? "dark" : "light";
+  document.documentElement.dataset.palette = S.palette || "garden";
   document.documentElement.dataset.text = S.text;
 }
 function render() {
@@ -300,17 +325,18 @@ function viewHome() {
   if (S.wins > 0) out += `<section class="card row"><div class="ico">🏆</div><div class="grow">You've skipped <b>${money(S.wins)}</b> of impulse buys. That's real money kept.</div></section>`;
   return out;
 }
-function billRow(b) {
+function billRow(b, i) {
   const d = daysBetween(today(), b.nextDue);
   const tag = d < 0 ? `<span class="tag bad">Overdue</span>` : d <= 3 ? `<span class="tag">${d === 0 ? "Today" : "In " + d + "d"}</span>` : `<span class="small muted">${fmtDate(b.nextDue)}</span>`;
-  return `<li><div class="ico">${esc(b.icon || "🧾")}</div><div class="grow"><div class="ellip">${esc(b.name)}</div><div>${tag}</div></div><div style="text-align:right"><div class="amt">${money(b.amount)}</div><button class="btn ghost" data-act="paid" data-id="${b.id}" style="padding:4px 0">Mark paid</button></div></li>`;
+  return `<li><div class="ico" ${icoS(colorAt(S.bills.indexOf(b)))}>${esc(b.icon || "🧾")}</div><div class="grow"><div class="ellip">${esc(b.name)}</div><div>${tag}</div></div><div style="text-align:right"><div class="amt">${money(b.amount)}</div><button class="btn ghost" data-act="paid" data-id="${b.id}" style="padding:4px 0">Mark paid</button></div></li>`;
 }
 function txRow(t) {
   const c = catOf(t.cat);
   const icon = t.kind === "income" ? "💵" : t.kind === "bill" ? "🧾" : t.kind === "save" ? "🐷" : t.kind === "refund" ? "↩️" : c[1];
   const title = t.note || (t.kind === "income" ? "Paycheck" : t.kind === "bill" ? "Bill" : t.kind === "save" ? "Savings" : c[2]);
   const plus = t.kind === "income" || t.kind === "refund";
-  return `<li><div class="ico">${icon}</div><div class="grow"><div class="ellip">${esc(title)}</div><div class="small muted">${fmtDay(ymd(new Date(t.ts)))}${t.kind === "spend" ? " · " + c[2] : ""}</div></div><div class="amt" style="color:${plus ? "var(--good)" : "inherit"}">${plus ? "+" : "−"}${money(t.amount).replace("−", "")}</div><button class="btn danger" data-act="delTx" data-id="${t.id}" aria-label="Delete" style="padding:6px">✕</button></li>`;
+  const ic = t.kind === "income" || t.kind === "refund" ? "#22b573" : t.kind === "bill" ? "#4dabf7" : t.kind === "save" ? "#a66bff" : c[3];
+  return `<li><div class="ico" ${icoS(ic)}>${icon}</div><div class="grow"><div class="ellip">${esc(title)}</div><div class="small muted">${fmtDay(ymd(new Date(t.ts)))}${t.kind === "spend" ? " · " + c[2] : ""}</div></div><div class="amt" style="color:${plus ? "var(--good)" : "inherit"}">${plus ? "+" : "−"}${money(t.amount).replace("−", "")}</div><button class="btn danger" data-act="delTx" data-id="${t.id}" aria-label="Delete" style="padding:6px">✕</button></li>`;
 }
 
 /* ---------- Spending ---------- */
@@ -319,8 +345,8 @@ function viewSpend() {
   const by = {}; list.forEach(t => by[t.cat] = (by[t.cat] || 0) + t.amount);
   const rows = Object.entries(by).sort((a, b) => b[1] - a[1]);
   const max = rows.length ? rows[0][1] : 1;
-  let out = `<section class="card"><div class="row"><div><div class="small muted">Spent this pay period</div><div class="kpi">${money(total)}</div></div><div style="text-align:right"><div class="small muted">Since</div><div>${fmtDate(prevPayday())}</div></div></div>`;
-  if (rows.length) out += `<div style="margin-top:12px">${rows.map(([k, v]) => { const c = catOf(k); return `<div style="margin:9px 0"><div class="row small"><span>${c[1]} ${c[2]}</span><span class="tnum">${money(v)}</span></div><div class="bar"><i style="width:${Math.max(4, v / max * 100)}%"></i></div></div>`; }).join("")}</div>`;
+  let out = `<section class="card kcard" style="background:${tint("#ff6b6b", .12)}"><div class="row"><div><div class="small muted">Spent this pay period</div><div class="kpi" style="color:#e8504f">${money(total)}</div></div><div style="text-align:right"><div class="small muted">Since</div><div>${fmtDate(prevPayday())}</div></div></div>`;
+  if (rows.length) out += `<div style="margin-top:12px">${rows.map(([k, v]) => { const c = catOf(k); return `<div style="margin:9px 0"><div class="row small"><span>${c[1]} ${c[2]}</span><span class="tnum">${money(v)}</span></div><div class="bar"><i style="width:${Math.max(4, v / max * 100)}%;background:${c[3]}"></i></div></div>`; }).join("")}</div>`;
   out += `</section>`;
   const all = S.tx.slice().sort((a, b) => b.ts - a.ts);
   out += `<section class="card"><h2>All activity</h2>${all.length ? `<ul class="list">${all.slice(0, 80).map(txRow).join("")}</ul>` : `<div class="empty">Nothing logged yet.</div>`}</section>`;
@@ -332,9 +358,9 @@ function viewSpend() {
 function viewBills() {
   const bills = S.bills.slice().sort((a, b) => a.nextDue.localeCompare(b.nextDue));
   const monthly = S.bills.reduce((a, b) => a + perMonth(b.amount, b.freq), 0);
-  let out = `<section class="card grid2"><div><div class="small muted">Bills per month</div><div class="kpi">${money0(monthly)}</div></div><div><div class="small muted">Due before payday</div><div class="kpi">${money0(billsBeforePayday().reduce((a, b) => a + b.amount, 0))}</div></div></section>`;
+  let out = kcard("#2f8be0", `<div class="grid2"><div><div class="small muted">Bills per month</div><div class="kpi">${money0(monthly)}</div></div><div><div class="small muted">Due before payday</div><div class="kpi">${money0(billsBeforePayday().reduce((a, b) => a + b.amount, 0))}</div></div></div>`);
   out += `<section class="card"><div class="row"><h2>Your bills & subscriptions</h2><button class="btn ghost" data-act="editBill">+ Add</button></div>`;
-  out += bills.length ? `<ul class="list">${bills.map(b => `<li><div class="ico">${esc(b.icon || "🧾")}</div><div class="grow" data-act="editBill" data-id="${b.id}" style="cursor:pointer"><div class="ellip">${esc(b.name)}</div><div class="small muted">${FREQ[b.freq]} · next ${fmtDate(b.nextDue)}</div></div><div style="text-align:right"><div class="amt">${money(b.amount)}</div><button class="btn ghost" data-act="paid" data-id="${b.id}" style="padding:4px 0">Mark paid</button></div></li>`).join("")}</ul>` : `<div class="empty">Add rent, phone, car, subscriptions… anything that repeats.</div>`;
+  out += bills.length ? `<ul class="list">${bills.map(b => `<li><div class="ico" ${icoS(colorAt(S.bills.indexOf(b)))}>${esc(b.icon || "🧾")}</div><div class="grow" data-act="editBill" data-id="${b.id}" style="cursor:pointer"><div class="ellip">${esc(b.name)}</div><div class="small muted">${FREQ[b.freq]} · next ${fmtDate(b.nextDue)}</div></div><div style="text-align:right"><div class="amt">${money(b.amount)}</div><button class="btn ghost" data-act="paid" data-id="${b.id}" style="padding:4px 0">Mark paid</button></div></li>`).join("")}</ul>` : `<div class="empty">Add rent, phone, car, subscriptions… anything that repeats.</div>`;
   out += `</section>`;
   const subs = S.bills.filter(b => b.amount < 40 && (b.freq === "monthly" || b.freq === "yearly"));
   if (subs.length) out += `<section class="card"><h2>🔎 Subscription check</h2><p class="muted small" style="margin-top:0">Small repeat charges add up. These cost you <b>${money(subs.reduce((a, b) => a + perMonth(b.amount, b.freq) * 12, 0))}</b> a year. Still using all of them?</p></section>`;
@@ -344,13 +370,13 @@ function viewBills() {
 /* ---------- Goals ---------- */
 function viewGoals() {
   const total = S.goals.reduce((a, g) => a + g.saved, 0);
-  let out = `<section class="card"><div class="small muted">Total saved</div><div class="kpi">${money(total)}</div><div class="small muted">Set-asides this paycheck are held back from your Safe to Spend so you don't spend them by accident.</div></section>`;
+  let out = kcard("#8b5cf6", `<div class="small muted">Total saved</div><div class="kpi">${money(total)}</div><div class="small muted">Set-asides this paycheck are held back from your Safe to Spend so you don't spend them by accident.</div>`);
   out += `<section class="card"><div class="row"><h2>Savings goals</h2><button class="btn ghost" data-act="editGoal">+ Add</button></div>`;
-  out += S.goals.length ? S.goals.map(g => {
+  out += S.goals.length ? S.goals.map((g, gi) => { const gc = colorAt(gi + 2);
     const pct = g.target ? Math.min(100, g.saved / g.target * 100) : 0; const done = g.saved >= g.target;
     const status = done ? `<span class="tag good">Reached 🎉</span>` : g.funded === cycleKey() ? `<span class="tag good">✓ Set aside this paycheck</span>` : g.perPay ? `<button class="btn ghost" data-act="fund" data-id="${g.id}" style="padding:4px 0">I moved ${money0(g.perPay)} →</button>` : "";
     const left = g.target - g.saved; const pays = g.perPay ? Math.ceil(left / g.perPay) : 0;
-    return `<div style="padding:12px 0;border-bottom:1px solid var(--line)"><div class="row"><div class="row" style="gap:10px;cursor:pointer" data-act="editGoal" data-id="${g.id}"><div class="ico">${esc(g.icon || "🐷")}</div><div><div>${esc(g.name)}</div><div class="small muted">${money0(g.saved)} of ${money0(g.target)}${!done && pays ? ` · ~${pays} paychecks to go` : ""}</div></div></div><b class="tnum">${Math.round(pct)}%</b></div><div class="bar" style="margin:10px 0 6px"><i style="width:${pct}%"></i></div>${status}</div>`;
+    return `<div style="padding:12px 0;border-bottom:1px solid var(--line)"><div class="row"><div class="row" style="gap:10px;cursor:pointer" data-act="editGoal" data-id="${g.id}"><div class="ico" ${icoS(gc)}>${esc(g.icon || "🐷")}</div><div><div>${esc(g.name)}</div><div class="small muted">${money0(g.saved)} of ${money0(g.target)}${!done && pays ? ` · ~${pays} paychecks to go` : ""}</div></div></div><b class="tnum" style="color:${gc}">${Math.round(pct)}%</b></div><div class="bar" style="margin:10px 0 6px"><i style="width:${pct}%;background:${gc}"></i></div>${status}</div>`;
   }).join("") : `<div class="empty">Start with a small emergency fund. Even ${S.currency}10 a paycheck counts.</div>`;
   out += `</section>`;
   out += `<section class="card"><h2>🎨 100 Envelope Challenge</h2><p class="small muted" style="margin-top:0">Tap an envelope when you save that amount. Fill all 100 = ${money0(5050)}.</p>${envelopes()}</section>`;
@@ -358,7 +384,7 @@ function viewGoals() {
 }
 function envelopes() {
   const done = new Set(S.env || []);
-  return `<div style="display:grid;grid-template-columns:repeat(10,1fr);gap:4px">${Array.from({length: 100}, (_, i) => i + 1).map(n => `<button data-act="env" data-n="${n}" style="aspect-ratio:1;border:0;border-radius:6px;font-size:.68em;cursor:pointer;background:${done.has(n) ? "var(--brand)" : "var(--brand-2)"};color:${done.has(n) ? "#fff" : "var(--brand)"}">${n}</button>`).join("")}</div><div class="small muted" style="margin-top:8px">${done.size}/100 · ${money0([...done].reduce((a, b) => a + b, 0))} saved</div>`;
+  return `<div style="display:grid;grid-template-columns:repeat(10,1fr);gap:4px">${Array.from({length: 100}, (_, i) => i + 1).map(n => `<button data-act="env" data-n="${n}" style="aspect-ratio:1;border:0;border-radius:6px;font-size:.68em;cursor:pointer;background:${done.has(n) ? colorAt(n) : tint(colorAt(n), .14)};color:${done.has(n) ? "#fff" : colorAt(n)}">${n}</button>`).join("")}</div><div class="small muted" style="margin-top:8px">${done.size}/100 · ${money0([...done].reduce((a, b) => a + b, 0))} saved</div>`;
 }
 
 /* ---------- Debt ---------- */
@@ -377,9 +403,9 @@ function simulate(order) {
 }
 function viewDebt() {
   const total = S.debts.reduce((a, d) => a + d.balance, 0);
-  let out = `<section class="card"><div class="small muted">Total debt</div><div class="kpi">${money0(total)}</div></section>`;
+  let out = kcard("#f08c00", `<div class="small muted">Total debt</div><div class="kpi">${money0(total)}</div>`);
   out += `<section class="card"><div class="row"><h2>Your debts</h2><button class="btn ghost" data-act="editDebt">+ Add</button></div>`;
-  out += S.debts.length ? `<ul class="list">${S.debts.map(d => `<li data-act="editDebt" data-id="${d.id}" style="cursor:pointer"><div class="ico">💳</div><div class="grow"><div class="ellip">${esc(d.name)}</div><div class="small muted">${d.apr}% APR · min ${money0(d.min)}/mo</div></div><div class="amt">${money0(d.balance)}</div></li>`).join("")}</ul>` : `<div class="empty">Add a card or loan to see your debt-free date.</div>`;
+  out += S.debts.length ? `<ul class="list">${S.debts.map((d, di) => `<li data-act="editDebt" data-id="${d.id}" style="cursor:pointer"><div class="ico" ${icoS(colorAt(di + 3))}>💳</div><div class="grow"><div class="ellip">${esc(d.name)}</div><div class="small muted">${d.apr}% APR · min ${money0(d.min)}/mo</div></div><div class="amt">${money0(d.balance)}</div></li>`).join("")}</ul>` : `<div class="empty">Add a card or loan to see your debt-free date.</div>`;
   out += `</section>`;
   if (S.debts.length) {
     const snow = simulate((a, b) => a.balance - b.balance), ava = simulate((a, b) => b.apr - a.apr);
@@ -388,8 +414,8 @@ function viewDebt() {
     out += `<section class="card"><h2>Snowball vs Avalanche</h2>
       <label class="f"><span>Extra I can add each month</span><input class="in" inputmode="decimal" data-field="extraDebt" value="${S.extraDebt}"></label>
       <div class="grid2">
-        <div class="card" style="margin:0;background:var(--bg)"><div class="small muted">❄️ Snowball<br>smallest first</div><div class="kpi">${snow.month >= 600 ? "Never" : date(snow.month)}</div><div class="small muted">Interest ${money0(snow.interest)}</div>${better === "snow" ? '<span class="tag good">Quick wins</span>' : ""}</div>
-        <div class="card" style="margin:0;background:var(--bg)"><div class="small muted">🏔️ Avalanche<br>highest rate first</div><div class="kpi">${ava.month >= 600 ? "Never" : date(ava.month)}</div><div class="small muted">Interest ${money0(ava.interest)}</div>${better === "ava" ? `<span class="tag good">Saves ${money0(snow.interest - ava.interest)}</span>` : ""}</div>
+        <div class="card" style="margin:0;background:${tint("#4dabf7", .14)}"><div class="small muted">❄️ Snowball<br>smallest first</div><div class="kpi">${snow.month >= 600 ? "Never" : date(snow.month)}</div><div class="small muted">Interest ${money0(snow.interest)}</div>${better === "snow" ? '<span class="tag good">Quick wins</span>' : ""}</div>
+        <div class="card" style="margin:0;background:${tint("#ff9f43", .14)}"><div class="small muted">🏔️ Avalanche<br>highest rate first</div><div class="kpi">${ava.month >= 600 ? "Never" : date(ava.month)}</div><div class="small muted">Interest ${money0(ava.interest)}</div>${better === "ava" ? `<span class="tag good">Saves ${money0(snow.interest - ava.interest)}</span>` : ""}</div>
       </div>
       ${better === "same" ? '<p class="small"><b>Both give the same result</b> with your debts — pick the one that keeps you motivated.</p>' : ""}<p class="small muted">Tip: every extra ${S.currency}25 a month moves your debt-free date closer. Try changing the number above.</p></section>`;
   }
@@ -415,7 +441,7 @@ function openSpend(prefill) {
   sheet(`<h2>Log spending</h2>
     <input class="in money" name="amt" inputmode="decimal" placeholder="${S.currency}0.00" value="${prefill ? prefill.amount : ""}" aria-label="Amount">
     <div class="chips" style="margin:10px 0 14px;justify-content:center">${quick.map(q => `<button class="chip" data-quick="${q}">${S.currency}${q}</button>`).join("")}</div>
-    <div class="chips" style="margin-bottom:12px">${CATS.map(c => `<button class="chip ${c[0] === spendCat ? "on" : ""}" data-cat="${c[0]}">${c[1]} ${c[2]}</button>`).join("")}</div>
+    <div class="chips" style="margin-bottom:12px">${CATS.map(c => `<button class="chip ${c[0] === spendCat ? "on" : ""}" data-cat="${c[0]}" style="--cc:${c[3]}">${c[1]} ${c[2]}</button>`).join("")}</div>
     <label class="f"><span>Note (optional)</span><input class="in" name="note" placeholder="e.g. Target" value="${esc(prefill?.note || "")}"></label>
     <button class="btn full" data-act="saveSpend">Save</button>`);
 }
@@ -494,6 +520,7 @@ function openSettings() {
     <label class="f"><span>I get paid</span><select class="in" name="payFreq">${["weekly","biweekly","semimonthly","monthly"].map(k => `<option value="${k}" ${k === S.payFreq ? "selected" : ""}>${FREQ[k]}</option>`).join("")}</select></label>
     <div class="grid2"><label class="f"><span>Safety cushion</span><input class="in" name="buffer" inputmode="decimal" value="${S.buffer}"></label>
     <label class="f"><span>Currency symbol</span><input class="in" name="currency" value="${esc(S.currency)}" maxlength="4"></label></div>
+    <label class="f"><span>Colors</span></label><div class="swatches" id="palPick">${PALETTES.map(([k, n, g]) => `<button class="sw ${k === (S.palette || "garden") ? "on" : ""}" data-pal="${k}" style="background:linear-gradient(135deg,${g})">${n}</button>`).join("")}</div>
     <div class="grid2"><label class="f"><span>Theme</span><select class="in" name="theme">${[["auto","Match phone"],["light","Light"],["dark","Dark"]].map(([k, v]) => `<option value="${k}" ${k === S.theme ? "selected" : ""}>${v}</option>`).join("")}</select></label>
     <label class="f"><span>Text size</span><select class="in" name="text"><option value="normal">Normal</option><option value="large" ${S.text === "large" ? "selected" : ""}>Large</option></select></label></div>
     <button class="btn full" data-act="saveSettings">Save settings</button>
@@ -601,7 +628,7 @@ const A = {
   },
   saveSettings() {
     S.name = val("name").trim(); S.payAmount = num(val("payAmount")); S.nextPayday = val("nextPayday") || S.nextPayday; S.payFreq = val("payFreq");
-    S.buffer = Math.max(0, num(val("buffer"))); S.currency = val("currency").trim() || "$"; S.theme = val("theme"); S.text = val("text");
+    S.buffer = Math.max(0, num(val("buffer"))); S.currency = val("currency").trim() || "$"; S.theme = val("theme"); S.text = val("text"); S.palette = $("#palPick .on")?.dataset.pal || S.palette;
     save(); close(); render(); toast("Saved ✓");
   },
   export() {
@@ -633,6 +660,7 @@ document.addEventListener("click", e => {
   const q = e.target.closest("[data-quick]"); if (q) { $('#layer [name="amt"]').value = q.dataset.quick; return; }
   const c = e.target.closest("[data-cat]"); if (c) { spendCat = c.dataset.cat; c.parentElement.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === c)); return; }
   const ic = e.target.closest("[data-icon]"); if (ic) { ic.parentElement.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === ic)); return; }
+  const pal = e.target.closest("[data-pal]"); if (pal) { pal.parentElement.querySelectorAll(".sw").forEach(x => x.classList.toggle("on", x === pal)); document.documentElement.dataset.palette = pal.dataset.pal; return; }
   const k = e.target.closest("#incKind [data-k]"); if (k) { k.parentElement.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === k)); return; }
   const a = e.target.closest("[data-act]"); if (a && A[a.dataset.act]) A[a.dataset.act](a);
 });
